@@ -85,6 +85,8 @@ export class PropertyPanel {
         x.value = vec.x.toString()
         y.value = vec.y.toString()
 
+        x.step = y.step = '0.001'
+
         x.oninput = y.oninput = () =>
             onChange(new THREE.Vector2(+x.value, +y.value))
 
@@ -106,6 +108,9 @@ export class PropertyPanel {
 
         x.value = value.x.toString()
         y.value = value.y.toString()
+        
+        x.step = y.step = '0.001'
+
 
         x.oninput = y.oninput = () =>
             onChange(new THREE.Vector2(+x.value, +y.value))
