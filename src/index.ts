@@ -21,22 +21,10 @@ const store = new ShapeStore();
 store.subscribe(() => {
     const shape = store.getSelected()
 
-    clearVertexHandles()
     editingPolyline = null
 
     if (shape instanceof Polyline) {
         editingPolyline = shape
-
-        const offset = shape.mesh.position
-
-        shape.points.forEach((p, index) => {
-            const handle = createVertexHandle(
-                new THREE.Vector2(p.x + offset.x, p.y + offset.y)
-            )
-                ; (handle as any).userData.index = index
-            vertexHandles.push(handle)
-            renderer.add(handle)
-        })
     }
 })
 
@@ -61,8 +49,6 @@ let polylinePoints: THREE.Vector2[] = []
 let polylinePreview: THREE.Line | null = null
 let isDrawingPolyline = false
 let editingPolyline: Polyline | null = null
-let vertexHandles: THREE.Mesh[] = []
-let activeVertexIndex: number | null = null
 
 
 
@@ -71,7 +57,6 @@ new Toolbar(
     tool => {
         (activeTool = tool)
         editingPolyline = null
-        clearVertexHandles()
     }
 )
 
@@ -96,26 +81,7 @@ function highlight(mesh: THREE.Object3D | null) {
     lastSelected = mesh
 }
 
-function createVertexHandle(position: THREE.Vector2) {
-    const geometry = new THREE.CircleGeometry(0.25, 16)
-    const material = new THREE.MeshBasicMaterial({
-        color: '#00ffff',
-        depthTest: false,
-        transparent: true
-    })
 
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.set(position.x, position.y, 1)
-    mesh.renderOrder = 999
-    return mesh
-}
-
-
-function clearVertexHandles() {
-    vertexHandles.forEach(h => renderer.remove(h))
-    vertexHandles = []
-    activeVertexIndex = null
-}
 
 
 
@@ -143,20 +109,6 @@ function getWorldPoint(
 
 
 canvas.addEventListener('mousedown', (e) => {
-
-    if (editingPolyline && vertexHandles.length > 0) {
-        const hits = raycaster.cast(
-            e,
-            canvas,
-            renderer.camera,
-            vertexHandles
-        )
-        console.log(hits)
-        if (hits.length > 0) {
-            activeVertexIndex = hits[0].object.userData.index
-            return
-        }
-    }
 
 
     if (activeTool === 'polyline') {
@@ -198,7 +150,6 @@ canvas.addEventListener('mousedown', (e) => {
         store.select(null as any);
         highlight(null);
         editingPolyline = null;
-        clearVertexHandles();
         return;
     }
 
@@ -216,28 +167,6 @@ canvas.addEventListener('mousedown', (e) => {
 canvas.addEventListener('mousemove', (e) => {
 
     const current = getWorldPoint(e, canvas, renderer.camera);
-
-    if (
-        editingPolyline &&
-        activeVertexIndex !== null
-    ) {
-        const pos = getWorldPoint(e, canvas, renderer.camera)
-        const offset = editingPolyline.mesh.position
-
-        editingPolyline.points[activeVertexIndex].set(
-            pos.x - offset.x,
-            pos.y - offset.y
-        )
-        editingPolyline.rebuild()
-
-        vertexHandles[activeVertexIndex].position.set(
-            pos.x,
-            pos.y,
-            0.05
-        )
-
-        return
-    }
 
     if (activeTool === 'polyline' && isDrawingPolyline) {
         if (polylinePreview) {
@@ -289,11 +218,6 @@ canvas.addEventListener('mousemove', (e) => {
 canvas.addEventListener('mouseup', (e) => {
 
     const end = getWorldPoint(e, canvas, renderer.camera);
-
-    if (activeVertexIndex !== null) {
-        activeVertexIndex = null
-        return
-    }
 
     if (!startPoint) return;
 
