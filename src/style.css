@@ -123,6 +123,7 @@ nav{
   font-size: 0.9rem;
   cursor: pointer;
   transition: background 0.15s ease, transform 0.05s ease;
+  min-width: 0;
 }
 
 .object-row:hover {
@@ -154,6 +155,7 @@ nav{
 
 .object-name {
   flex: 1;
+  min-width: 0;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -166,6 +168,12 @@ nav{
   opacity: 0;
   transition: opacity 0.15s ease;
 }
+
+.object-name:hover {
+  white-space: normal;
+  overflow: visible;
+}
+
 
 .object-row:hover .object-actions {
   opacity: 1;
