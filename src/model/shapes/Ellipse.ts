@@ -1,7 +1,8 @@
 import * as THREE from 'three'
 import type { Shape } from './Shape'
 
-export class Ellipse implements Shape{
+export class Ellipse implements Shape {
+    readonly name = 'Ellipse';
     id = crypto.randomUUID();
     visible = true;
     mesh: THREE.LineLoop;
@@ -17,7 +18,7 @@ export class Ellipse implements Shape{
         radiusX: number,
         radiusY: number,
         color: string = '#00aa88'
-    ){
+    ) {
         this.center = center;
         this.radiusX = radiusX;
         this.radiusY = radiusY;
@@ -32,7 +33,7 @@ export class Ellipse implements Shape{
 
     private createGeometry(rx: number, ry: number) {
         const curve = new THREE.EllipseCurve(
-            0, 0,            
+            0, 0,
             rx, ry,
             0, Math.PI * 2,
             false,
@@ -55,12 +56,12 @@ export class Ellipse implements Shape{
         radiusY?: number,
 
     }): void {
-        if(center){
+        if (center) {
             this.center = center;
             this.mesh.position.set(center.x, center.y, 0);
         }
 
-        if(radiusX !== undefined && radiusY !== undefined){
+        if (radiusX !== undefined && radiusY !== undefined) {
             this.radiusX = radiusX;
             this.radiusY = radiusY;
 

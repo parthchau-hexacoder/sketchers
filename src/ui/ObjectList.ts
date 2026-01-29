@@ -28,7 +28,7 @@ export class ObjectList {
                     : '1px solid transparent'
 
             const name = document.createElement('span')
-            name.textContent = shape.constructor.name
+            name.textContent = shape.name
             name.onclick = () => this.store.select(shape.id)
 
             const eye = document.createElement('button')

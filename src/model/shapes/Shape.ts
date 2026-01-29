@@ -6,6 +6,7 @@ export interface Shape {
   mesh: THREE.Object3D
   visible: boolean
   color: string
+  readonly name: string
 
   update(data: any): void
   setColor(color: string): void

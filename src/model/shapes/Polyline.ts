@@ -1,20 +1,21 @@
 import * as THREE from 'three';
 import type { Shape } from './Shape';
 
-export class Polyline implements Shape{
+export class Polyline implements Shape {
+    readonly name = 'Polyline';
     id = crypto.randomUUID();
-    visible =  true;
+    visible = true;
     color: string;
     mesh: THREE.Line;
 
     points: THREE.Vector2[];
 
-    constructor(points:THREE.Vector2[], color = '#ff8800'){
+    constructor(points: THREE.Vector2[], color = '#ff8800') {
         this.points = points;
         this.color = color;
 
         const geometry = this.createGeometry(points);
-        const material = new THREE.LineBasicMaterial({color});
+        const material = new THREE.LineBasicMaterial({ color });
 
         this.mesh = new THREE.Line(geometry, material)
     }
@@ -26,7 +27,7 @@ export class Polyline implements Shape{
     }
 
     update({ points }: { points?: THREE.Vector2[] }): void {
-        if(!points) return;
+        if (!points) return;
 
         this.points = points;
         this.mesh.geometry.dispose();
@@ -35,7 +36,7 @@ export class Polyline implements Shape{
 
     setColor(color: string) {
         this.color = color
-        ;(this.mesh.material as THREE.LineBasicMaterial).color.set(color)
+            ; (this.mesh.material as THREE.LineBasicMaterial).color.set(color)
     }
 
     rebuild() {
