@@ -1,5 +1,4 @@
 import type { ToolType } from "../types/ToolType";
-import { FileService } from '../services/FileService';
 
 
 export class Toolbar {
