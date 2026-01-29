@@ -18,15 +18,6 @@ console.log(canvas)
 const renderer = new Renderer(canvas);
 const store = new ShapeStore();
 
-store.subscribe(() => {
-    const shape = store.getSelected()
-
-    editingPolyline = null
-
-    if (shape instanceof Polyline) {
-        editingPolyline = shape
-    }
-})
 
 new ObjectList(
     document.getElementById('object-list')!,
@@ -48,7 +39,6 @@ let lastSelected: THREE.Object3D | null = null;
 let polylinePoints: THREE.Vector2[] = []
 let polylinePreview: THREE.Line | null = null
 let isDrawingPolyline = false
-let editingPolyline: Polyline | null = null
 
 
 
@@ -56,7 +46,6 @@ new Toolbar(
     document.getElementById('toolbar')!,
     tool => {
         (activeTool = tool)
-        editingPolyline = null
     }
 )
 
@@ -149,7 +138,6 @@ canvas.addEventListener('mousedown', (e) => {
     if (hits.length === 0) {
         store.select(null as any);
         highlight(null);
-        editingPolyline = null;
         return;
     }
 
