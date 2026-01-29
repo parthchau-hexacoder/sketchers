@@ -27,9 +27,13 @@ store.subscribe(() => {
     if (shape instanceof Polyline) {
         editingPolyline = shape
 
+        const offset = shape.mesh.position
+
         shape.points.forEach((p, index) => {
-            const handle = createVertexHandle(p)
-            ;(handle as any).userData.index = index
+            const handle = createVertexHandle(
+                new THREE.Vector2(p.x + offset.x, p.y + offset.y)
+            )
+                ; (handle as any).userData.index = index
             vertexHandles.push(handle)
             renderer.add(handle)
         })
@@ -81,12 +85,12 @@ function highlight(mesh: THREE.Object3D | null) {
     if (lastSelected) {
         const shape = store.findByMesh(lastSelected)
         if (shape) {
-            ;(lastSelected as any).material.color.set(shape.color)
+            ; (lastSelected as any).material.color.set(shape.color)
         }
     }
 
     if (mesh) {
-        ;(mesh as any).material.color.set('#0000ff')
+        ; (mesh as any).material.color.set('#0000ff')
     }
 
     lastSelected = mesh
@@ -96,13 +100,13 @@ function createVertexHandle(position: THREE.Vector2) {
     const geometry = new THREE.CircleGeometry(0.25, 16)
     const material = new THREE.MeshBasicMaterial({
         color: '#00ffff',
-        depthTest: false,  
+        depthTest: false,
         transparent: true
     })
 
     const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.set(position.x, position.y, 1) 
-    mesh.renderOrder = 999                       
+    mesh.position.set(position.x, position.y, 1)
+    mesh.renderOrder = 999
     return mesh
 }
 
@@ -138,7 +142,7 @@ function getWorldPoint(
 }
 
 
-canvas.addEventListener('mousedown',(e)=>{
+canvas.addEventListener('mousedown', (e) => {
 
     if (editingPolyline && vertexHandles.length > 0) {
         const hits = raycaster.cast(
@@ -155,7 +159,7 @@ canvas.addEventListener('mousedown',(e)=>{
     }
 
 
-    if(activeTool === 'polyline'){
+    if (activeTool === 'polyline') {
         const point = getWorldPoint(e, canvas, renderer.camera);
 
         polylinePoints.push(point);
@@ -176,7 +180,7 @@ canvas.addEventListener('mousedown',(e)=>{
 
     }
 
-    if (activeTool !== 'select'){
+    if (activeTool !== 'select') {
         startPoint = getWorldPoint(e, canvas, renderer.camera)
         return;
     }
@@ -190,7 +194,7 @@ canvas.addEventListener('mousedown',(e)=>{
         objects
     )
 
-    if(hits.length === 0){
+    if (hits.length === 0) {
         store.select(null as any);
         highlight(null);
         editingPolyline = null;
@@ -206,11 +210,11 @@ canvas.addEventListener('mousedown',(e)=>{
         highlight(shape.mesh)
     }
 
-    
+
 })
 
-canvas.addEventListener('mousemove', (e)=>{
-    
+canvas.addEventListener('mousemove', (e) => {
+
     const current = getWorldPoint(e, canvas, renderer.camera);
 
     if (
@@ -218,11 +222,14 @@ canvas.addEventListener('mousemove', (e)=>{
         activeVertexIndex !== null
     ) {
         const pos = getWorldPoint(e, canvas, renderer.camera)
+        const offset = editingPolyline.mesh.position
 
-        editingPolyline.points[activeVertexIndex].copy(pos)
+        editingPolyline.points[activeVertexIndex].set(
+            pos.x - offset.x,
+            pos.y - offset.y
+        )
         editingPolyline.rebuild()
 
-        // move handle
         vertexHandles[activeVertexIndex].position.set(
             pos.x,
             pos.y,
@@ -231,7 +238,7 @@ canvas.addEventListener('mousemove', (e)=>{
 
         return
     }
-    
+
     if (activeTool === 'polyline' && isDrawingPolyline) {
         if (polylinePreview) {
             renderer.remove(polylinePreview)
@@ -245,23 +252,23 @@ canvas.addEventListener('mousemove', (e)=>{
         return
     }
 
-    if(!startPoint) return;
+    if (!startPoint) return;
 
 
-    if(previewShape){
+    if (previewShape) {
         renderer.remove(previewShape);
         previewShape = null;
     }
 
 
 
-    if(activeTool === 'line'){
+    if (activeTool === 'line') {
         const line = new Line(startPoint, current);
-        
+
         previewShape = line.mesh;
         renderer.add(previewShape);
     }
-    if(activeTool === 'circle'){
+    if (activeTool === 'circle') {
         const radius = startPoint.distanceTo(current);
         const circle = new Circle(startPoint, radius);
 
@@ -279,29 +286,29 @@ canvas.addEventListener('mousemove', (e)=>{
     }
 })
 
-canvas.addEventListener('mouseup',(e)=>{
-    
+canvas.addEventListener('mouseup', (e) => {
+
     const end = getWorldPoint(e, canvas, renderer.camera);
-    
+
     if (activeVertexIndex !== null) {
         activeVertexIndex = null
         return
     }
-    
-    if(!startPoint) return;
+
+    if (!startPoint) return;
 
     if (previewShape) {
         renderer.remove(previewShape)
         previewShape = null
     }
 
-    if(activeTool === 'line'){
+    if (activeTool === 'line') {
         const line = new Line(startPoint, end);
         store.add(line);
         renderer.add(line.mesh);
     }
 
-    if(activeTool === 'circle'){
+    if (activeTool === 'circle') {
         const radius = startPoint.distanceTo(end);
         const circle = new Circle(startPoint, radius);
         store.add(circle);

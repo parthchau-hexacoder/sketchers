@@ -40,10 +40,10 @@ export class PropertyPanel {
 
         this.addColorPicker()
 
-        this.addVisibilityToggle(shape)
 
         this.addShapeSpecific(shape)
 
+        this.addVisibilityToggle(shape)
         this.addUpdateButton(shape)
         this.addDeleteButton(shape)
     }
@@ -64,8 +64,8 @@ export class PropertyPanel {
             radiusY: shape.radiusY,
 
             points: shape.points
-            ? shape.points.map((p: any) => p.clone())
-            : null
+                ? shape.points.map((p: any) => p.clone())
+                : null
         }
     }
 
@@ -126,11 +126,21 @@ export class PropertyPanel {
 
     private addVisibilityToggle(shape: Shape) {
         const btn = document.createElement('button')
-        btn.textContent = shape.visible ? 'Hide' : 'Show'
+        btn.innerHTML = shape.visible
+            ? `<i class="ri-eye-line"></i>`
+            : `<i class="ri-eye-off-line"></i>`
+        btn.title = shape.visible ? 'Hide' : 'Show'
+
+
 
         btn.onclick = () => {
             shape.visible = !shape.visible
             shape.mesh.visible = shape.visible
+            btn.innerHTML = shape.visible
+                ? `<i class="ri-eye-line"></i>`
+                : `<i class="ri-eye-off-line"></i>`
+            btn.title = shape.visible ? 'Hide' : 'Show'
+
             this.store.refresh()
         }
 
@@ -179,6 +189,19 @@ export class PropertyPanel {
         if ('points' in shape && Array.isArray(this.draft.points)) {
             this.container.appendChild(document.createElement('hr'))
 
+            this.draft.points.forEach((p: THREE.Vector2, index: number) => {
+                this.addVector2Editor(
+                    `Vertex ${index + 1}`,
+                    p,
+                    (v) => {
+                        p.x = v.x
+                        p.y = v.y
+                    }
+                )
+            })
+
+            this.container.appendChild(document.createElement('hr'))
+
             const addBtn = document.createElement('button')
             addBtn.textContent = 'Add Vertex'
             addBtn.onclick = () => {
@@ -192,6 +215,7 @@ export class PropertyPanel {
                         (last.y + prev.y) / 2
                     )
                     pts.push(mid)
+                    this.render()
                 }
             }
 
@@ -200,6 +224,7 @@ export class PropertyPanel {
             removeBtn.onclick = () => {
                 if (this.draft.points.length > 2) {
                     this.draft.points.pop()
+                    this.render()
                 }
             }
 
@@ -263,8 +288,13 @@ export class PropertyPanel {
 
     private addDeleteButton(shape: Shape) {
         const btn = document.createElement('button')
-        btn.textContent = 'Delete'
+        btn.innerHTML = '<i class="ri-delete-bin-line"></i> Delete'
         btn.style.color = 'red'
+        btn.style.display = 'flex'
+        btn.style.alignItems = 'center'
+        btn.style.justifyContent = 'center'
+        btn.style.gap = '8px'
+
         btn.onclick = () => {
             this.store.remove(shape.id)
             this.store.refresh();

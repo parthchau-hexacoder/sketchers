@@ -12,6 +12,16 @@ export class ObjectList {
         this.store.subscribe(() => this.render())
     }
 
+    private getIconForShape(shapeType: string): string {
+        switch (shapeType) {
+            case 'Circle': return 'ri-checkbox-blank-circle-line';
+            case 'Ellipse': return 'ri-disc-line';
+            case 'Line': return 'ri-subtract-line';
+            case 'Polyline': return 'ri-share-line';
+            default: return 'ri-shape-line';
+        }
+    }
+
     private render() {
 
         this.container.innerHTML = '<h3>Objects</h3>'
@@ -27,8 +37,20 @@ export class ObjectList {
                     ? '1px solid blue'
                     : '1px solid transparent'
 
-            const name = document.createElement('span')
-            name.textContent = shape.name
+            const name = document.createElement('div')
+            name.style.display = 'flex'
+            name.style.alignItems = 'center'
+            name.style.gap = '8px'
+
+            const icon = document.createElement('i')
+            icon.className = this.getIconForShape(shape.name)
+
+            const text = document.createElement('span')
+            text.textContent = shape.name
+
+            name.appendChild(icon)
+            name.appendChild(text)
+
             name.onclick = () => this.store.select(shape.id)
 
             const eye = document.createElement('button')
