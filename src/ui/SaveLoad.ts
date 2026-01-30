@@ -10,7 +10,7 @@ export class SaveLoad{
 
     private renderSave(container: HTMLElement, store: ShapeStore){
         const save = document.createElement('button');
-        save.innerText = 'Save'
+        save.innerHTML = '<i class="ri-save-line"></i>  Save'
         save.addEventListener('click', () => {
             FileService.save(store.getAll())
         })
@@ -19,7 +19,7 @@ export class SaveLoad{
     
     private renderLoad(container: HTMLElement, store: ShapeStore, renderer: Renderer){
         const load = document.createElement('button');
-        load.innerText ='Load';
+        load.innerHTML ='<i class="ri-folder-upload-line"></i>  Load';
 
         const input = document.createElement('input');
         input.type ='file';
