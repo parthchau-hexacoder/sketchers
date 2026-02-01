@@ -141,7 +141,7 @@ canvas.addEventListener('mousedown', (e) => {
         return;
     }
 
-    const mesh = hits[0].object;
+    const mesh = hits[hits.length - 1].object;
     const shape = store.findByMesh(mesh);
 
     if (shape) {
