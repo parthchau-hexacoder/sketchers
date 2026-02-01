@@ -63,11 +63,11 @@ nav{
   color: var(--text-main);
 }
 
-#toolbar button.active,#save-load.active {
+/* #toolbar button.active,#save-load.active {
   background: var(--accent);
   color: white;
   box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-}
+} */
 
 #app {
   display: flex;

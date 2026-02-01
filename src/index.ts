@@ -236,6 +236,8 @@ canvas.addEventListener('mouseup', (e) => {
         renderer.add(ellipse.mesh)
     }
 
+    activeTool ='select'
+    store.refresh();
     startPoint = null;
 })
 
@@ -253,4 +255,6 @@ canvas.addEventListener('dblclick', () => {
 
     polylinePoints = []
     isDrawingPolyline = false
+
+    activeTool = 'select'
 })

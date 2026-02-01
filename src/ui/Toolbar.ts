@@ -12,7 +12,12 @@ export class Toolbar {
             polyline: 'ri-share-line'
         };
 
+        let temp = 0;
         (Object.keys(icons) as ToolType[]).forEach(t => {
+            if(temp === 0 ){
+                temp++;
+                return;
+            }
             const btn = document.createElement('button');
             btn.innerHTML = `<i class="${icons[t]}"></i> <span>${t}</span>`;
 
